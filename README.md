@@ -1,8 +1,10 @@
 # Intern Flow — Frontend
 
-Client for the [Intern Flow backend](../InternFlow-AI) — the internship lifecycle app covering referral through closure and certificate, with server-side RBAC, an NDA hard gate, and AI-assisted resume parsing/evaluation/chatbot. This app is a separate client of that API, not a monolith with it (see the backend's `CLAUDE.md` for why).
+Client for the [Intern Flow backend](https://github.com/Anushchinnasamy/InternFlow-AI) — the internship lifecycle app covering referral through closure and certificate, with server-side RBAC, an NDA hard gate, and AI-assisted resume parsing/evaluation/chatbot. This app is a separate client of that API, not a monolith with it (see the backend's `CLAUDE.md` for why).
 
 React + TypeScript + Vite, Tailwind + shadcn/ui, TanStack Query, react-router-dom, react-hook-form + Zod.
+
+**Repos:** this one ([InternFlow-AI-Frontend](https://github.com/Anushchinnasamy/InternFlow-AI-Frontend)) is the client. The API it talks to lives at [InternFlow-AI](https://github.com/Anushchinnasamy/InternFlow-AI).
 
 ## Local setup
 
