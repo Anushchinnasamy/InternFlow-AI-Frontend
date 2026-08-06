@@ -27,6 +27,10 @@ export default function SettingsPage() {
   const updateMe = useUpdateMe();
   const changePassword = useChangePassword();
 
+  // ProtectedRoute guarantees a user here, but keep the fallback key so this
+  // never throws if that ever changes.
+  const storageKey = (name: string) => `${name}:${user?.id ?? "anon"}`;
+
   const [name, setName] = useState(user?.name ?? "");
   const [timezone, setTimezone] = useState(user?.preferences?.timezone ?? "UTC");
 
@@ -35,9 +39,14 @@ export default function SettingsPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   // Purely client-side per the build plan — no backend field for these.
-  const [theme, setTheme] = useState<ThemePref>(() => (localStorage.getItem("themePreference") as ThemePref) || "system");
-  const [emailNotifications, setEmailNotifications] = useState(() => localStorage.getItem("prefEmailNotifications") !== "false");
-  const [inAppNotifications, setInAppNotifications] = useState(() => localStorage.getItem("prefInAppNotifications") !== "false");
+  // Keyed per-user-id: this is a shared-machine app (multiple seeded role
+  // accounts logging in/out of the same browser during manual testing), and
+  // an un-namespaced key meant whichever account last touched Settings
+  // silently set the theme for whoever logged in next — a real bug found
+  // during the F1 (Referrer) manual test pass, not a "missing toggle."
+  const [theme, setTheme] = useState<ThemePref>(() => (localStorage.getItem(storageKey("themePreference")) as ThemePref) || "system");
+  const [emailNotifications, setEmailNotifications] = useState(() => localStorage.getItem(storageKey("prefEmailNotifications")) !== "false");
+  const [inAppNotifications, setInAppNotifications] = useState(() => localStorage.getItem(storageKey("prefInAppNotifications")) !== "false");
 
   useEffect(() => {
     applyTheme(theme);
@@ -78,17 +87,17 @@ export default function SettingsPage() {
 
   function updateTheme(value: ThemePref) {
     setTheme(value);
-    localStorage.setItem("themePreference", value);
+    localStorage.setItem(storageKey("themePreference"), value);
   }
 
   function updateEmailNotifications(checked: boolean) {
     setEmailNotifications(checked);
-    localStorage.setItem("prefEmailNotifications", String(checked));
+    localStorage.setItem(storageKey("prefEmailNotifications"), String(checked));
   }
 
   function updateInAppNotifications(checked: boolean) {
     setInAppNotifications(checked);
-    localStorage.setItem("prefInAppNotifications", String(checked));
+    localStorage.setItem(storageKey("prefInAppNotifications"), String(checked));
   }
 
   return (
