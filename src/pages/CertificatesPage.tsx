@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
@@ -140,7 +141,7 @@ export default function CertificatesPage() {
                         disabled={downloadingId === cert.id}
                         onClick={() => void handleDownload(cert)}
                       >
-                        <Download /> {downloadingId === cert.id ? "Downloading…" : "Download"}
+                        {downloadingId === cert.id ? <Spinner /> : <Download />} {downloadingId === cert.id ? "Downloading…" : "Download"}
                       </Button>
                       <Button size="sm" variant="destructive" onClick={() => setRevoking(cert)}>
                         <Ban /> Revoke
@@ -177,7 +178,7 @@ export default function CertificatesPage() {
                     </Badge>
                     <div className="flex justify-end">
                       <Button size="sm" disabled={isGenerating} onClick={() => void handleGenerate(item)}>
-                        <Sparkles /> {isGenerating ? "Working…" : "Generate"}
+                        {isGenerating ? <Spinner /> : <Sparkles />} {isGenerating ? "Working…" : "Generate"}
                       </Button>
                     </div>
                   </CardContent>
@@ -208,6 +209,7 @@ export default function CertificatesPage() {
               Cancel
             </Button>
             <Button variant="destructive" disabled={revokeCertificate.isPending} onClick={() => void handleRevoke()}>
+              {revokeCertificate.isPending && <Spinner />}
               {revokeCertificate.isPending ? "Revoking…" : "Revoke"}
             </Button>
           </DialogFooter>

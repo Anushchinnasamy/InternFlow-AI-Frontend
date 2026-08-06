@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
 import { EmptyState } from "@/components/EmptyState";
 import { FileDropzone } from "@/components/FileDropzone";
 import { AiInsightsCard } from "@/components/AiInsightsCard";
@@ -100,7 +101,7 @@ export default function ResumeAnalyzerPage() {
               </div>
 
               <Button className="mt-4" disabled={!canAnalyze || isAnalyzing} onClick={() => void handleAnalyze()}>
-                <Sparkles />
+                {isAnalyzing ? <Spinner /> : <Sparkles />}
                 {isAnalyzing ? "Analyzing…" : "Analyze with AI"}
               </Button>
 

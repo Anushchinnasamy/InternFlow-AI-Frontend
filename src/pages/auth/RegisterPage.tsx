@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 
 const registerSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -94,6 +95,7 @@ export default function RegisterPage() {
               </p>
             )}
             <Button type="submit" className="w-full" disabled={mutation.isPending}>
+              {mutation.isPending && <Spinner />}
               {mutation.isPending ? "Creating account…" : "Create account"}
             </Button>
           </form>

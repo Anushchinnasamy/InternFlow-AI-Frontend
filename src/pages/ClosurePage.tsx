@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Dialog,
   DialogContent,
@@ -285,7 +286,7 @@ export default function ClosurePage() {
               Close dialog
             </Button>
             <Button disabled={isBusy} onClick={() => deactivating && void runCloseCheck(deactivating.id)}>
-              <KeyRound /> {closeCheck.isPending ? "Checking…" : "Finalize Closure"}
+              {closeCheck.isPending ? <Spinner /> : <KeyRound />} {closeCheck.isPending ? "Checking…" : "Finalize Closure"}
             </Button>
           </DialogFooter>
         </DialogContent>

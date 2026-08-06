@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 import { useAuth } from "@/context/AuthContext";
 import { useUpdateMe, useChangePassword } from "@/lib/settingsApi";
 import { ApiError } from "@/lib/api";
@@ -143,6 +144,7 @@ export default function SettingsPage() {
               </div>
               <div>
                 <Button disabled={updateMe.isPending} onClick={() => void saveProfile()}>
+                  {updateMe.isPending && <Spinner />}
                   {updateMe.isPending ? "Saving…" : "Save Changes"}
                 </Button>
               </div>
@@ -177,6 +179,7 @@ export default function SettingsPage() {
               </div>
               <div>
                 <Button disabled={changePassword.isPending} onClick={() => void submitPasswordChange()}>
+                  {changePassword.isPending && <Spinner />}
                   {changePassword.isPending ? "Changing…" : "Change Password"}
                 </Button>
               </div>

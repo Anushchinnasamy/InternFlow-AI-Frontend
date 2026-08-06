@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
 import { AiBadge } from "@/components/AiBadge";
 import { EmptyState } from "@/components/EmptyState";
 import { ConfidenceField } from "@/components/ConfidenceField";
@@ -451,6 +452,7 @@ export default function ReferralIntakePage() {
               Save Draft
             </Button>
             <Button type="submit" disabled={submitting}>
+              {submitting && <Spinner />}
               {submitting ? "Submitting…" : "Submit Referral"}
             </Button>
           </div>

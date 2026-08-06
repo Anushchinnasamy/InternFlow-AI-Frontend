@@ -15,7 +15,14 @@ interface AiCardProps {
 // never something a page author has to remember to add individually.
 export function AiCard({ title, description, children, className }: AiCardProps) {
   return (
-    <Card className={cn(className)}>
+    <Card
+      className={cn(
+        // Gradient border + soft glow so AI-sourced content reads as
+        // visually distinct at a glance, not just via the badge text.
+        "relative border-ai-from/30 shadow-[0_0_0_1px_var(--ai-glow),0_8px_24px_-12px_var(--ai-glow)] before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:rounded-[inherit] before:bg-gradient-to-br before:from-ai-from/5 before:to-ai-to/5",
+        className
+      )}
+    >
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         {description && <CardDescription>{description}</CardDescription>}

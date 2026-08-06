@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
@@ -289,6 +290,7 @@ export default function InternLifecyclePage() {
               Cancel
             </Button>
             <Button disabled={mentorConfirm.isPending} onClick={() => void submitConfirmation()}>
+              {mentorConfirm.isPending && <Spinner />}
               {mentorConfirm.isPending ? "Saving…" : "Confirm"}
             </Button>
           </DialogFooter>
@@ -318,6 +320,7 @@ export default function InternLifecyclePage() {
               Cancel
             </Button>
             <Button disabled={requestExtension.isPending} onClick={() => void submitExtensionRequest()}>
+              {requestExtension.isPending && <Spinner />}
               {requestExtension.isPending ? "Submitting…" : "Submit Request"}
             </Button>
           </DialogFooter>

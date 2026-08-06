@@ -121,7 +121,7 @@ export default function CopilotPage() {
                 className={cn("flex gap-2", message.role === "user" ? "justify-end" : "justify-start")}
               >
                 {message.role === "assistant" && (
-                  <div className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-muted">
+                  <div className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-ai-from to-ai-to text-white">
                     <Sparkles className="size-3.5" />
                   </div>
                 )}
@@ -129,13 +129,15 @@ export default function CopilotPage() {
                   <div
                     className={cn(
                       "rounded-lg px-3 py-2 text-sm",
-                      message.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
+                      message.role === "user"
+                        ? "bg-primary text-primary-foreground"
+                        : "border border-ai-from/20 bg-gradient-to-br from-ai-from/10 to-ai-to/10"
                     )}
                   >
                     {message.text}
                   </div>
                   {message.isAdvisory && (
-                    <Badge variant="outline" className="text-[10px] text-muted-foreground">
+                    <Badge variant="outline" className="border-ai-from/30 text-[10px] text-muted-foreground">
                       AI-generated, advisory only
                     </Badge>
                   )}

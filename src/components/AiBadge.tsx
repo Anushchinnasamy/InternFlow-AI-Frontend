@@ -7,7 +7,13 @@ import { cn } from "@/lib/utils";
 // reader can always tell which numbers are model output vs a direct query.
 export function AiBadge({ className }: { className?: string }) {
   return (
-    <Badge variant="secondary" className={cn("gap-1 text-[10px] uppercase tracking-wide", className)}>
+    <Badge
+      variant="secondary"
+      className={cn(
+        "gap-1 border-transparent bg-gradient-to-r from-ai-from to-ai-to text-[10px] uppercase tracking-wide text-white",
+        className
+      )}
+    >
       <Sparkles className="size-3" />
       AI generated
     </Badge>

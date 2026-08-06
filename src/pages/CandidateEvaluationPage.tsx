@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { useCandidate360 } from "@/lib/candidatesApi";
 import { useCandidateEvaluations, useEvaluateCandidate, useUpdateRubric, useDecideEvaluation } from "@/lib/evaluationsApi";
@@ -190,7 +191,7 @@ export default function CandidateEvaluationPage() {
                   disabled={!jobDescription.trim() || evaluateCandidate.isPending}
                   onClick={() => void handleEvaluate()}
                 >
-                  <Sparkles />
+                  {evaluateCandidate.isPending ? <Spinner /> : <Sparkles />}
                   {evaluateCandidate.isPending ? "Evaluating…" : "Run AI Evaluation"}
                 </Button>
               </CardContent>

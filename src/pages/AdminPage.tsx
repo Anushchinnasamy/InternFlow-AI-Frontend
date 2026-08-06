@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Dialog,
   DialogContent,
@@ -374,6 +375,7 @@ export default function AdminPage() {
               Cancel
             </Button>
             <Button disabled={createUser.isPending} onClick={() => void handleCreateUser()}>
+              {createUser.isPending && <Spinner />}
               {createUser.isPending ? "Creating…" : "Create"}
             </Button>
           </DialogFooter>

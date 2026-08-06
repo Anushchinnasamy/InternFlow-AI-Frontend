@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -475,6 +476,7 @@ export default function OnboardingPage() {
         {isCandidateRole && !readOnly && (
           <div className="flex justify-end gap-2">
             <Button type="submit" variant="outline" disabled={patchRecord.isPending}>
+              {patchRecord.isPending && <Spinner />}
               {patchRecord.isPending ? "Saving…" : "Save Draft"}
             </Button>
             {!hasCorrections && (
@@ -484,6 +486,7 @@ export default function OnboardingPage() {
                 title={!consentGiven ? "Consent is required before submitting" : undefined}
                 onClick={() => void handleSubmitForm()}
               >
+                {submitRecord.isPending && <Spinner />}
                 {submitRecord.isPending ? "Submitting…" : "Submit"}
               </Button>
             )}
@@ -492,6 +495,7 @@ export default function OnboardingPage() {
         {isCandidateRole && hasCorrections && (
           <div className="flex justify-end">
             <Button type="submit" disabled={patchRecord.isPending}>
+              {patchRecord.isPending && <Spinner />}
               {patchRecord.isPending ? "Saving…" : "Save Corrections"}
             </Button>
           </div>
@@ -507,6 +511,7 @@ export default function OnboardingPage() {
               Return for Correction
             </Button>
             <Button type="button" disabled={verifyRecord.isPending} onClick={() => void handleLock()}>
+              {verifyRecord.isPending && <Spinner />}
               {verifyRecord.isPending ? "Verifying…" : "Verify & Lock"}
             </Button>
           </div>
