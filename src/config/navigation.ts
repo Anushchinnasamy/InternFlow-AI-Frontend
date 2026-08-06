@@ -95,7 +95,17 @@ export const NAV_ITEMS: NavItem[] = [
     allowedRoles: ["IT_ADMIN", "ADMIN_SECURITY"],
     component: AccessProvisioningPage,
   },
-  { path: "/lifecycle", label: "Intern Lifecycle", icon: GitBranch, allowedRoles: ["MENTOR", "HR"], component: InternLifecyclePage },
+  {
+    path: "/lifecycle",
+    label: "Intern Lifecycle",
+    icon: GitBranch,
+    // PROGRAM_OWNER added alongside MENTOR/HR — extension.decide (backend
+    // rbac.ts) requires both HR and PROGRAM_OWNER, but this page was never
+    // reachable for PROGRAM_OWNER, so they had no way to act on their half
+    // of the approval. See useDecideExtension.
+    allowedRoles: ["MENTOR", "HR", "PROGRAM_OWNER"],
+    component: InternLifecyclePage,
+  },
   {
     path: "/closure",
     label: "Closure",

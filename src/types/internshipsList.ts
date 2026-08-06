@@ -25,6 +25,22 @@ export interface OpenTaskSummary {
   slaBreached: boolean;
 }
 
+export interface ExtensionRequestPayload {
+  requestedEndDate: string;
+  justification: string;
+  hrApproved: boolean;
+  hrApprovedBy: string | null;
+  hrApprovedAt: string | null;
+  programOwnerApproved: boolean;
+  programOwnerApprovedBy: string | null;
+  programOwnerApprovedAt: string | null;
+}
+
+export interface ExtensionRequestTaskSummary {
+  id: string;
+  payload: ExtensionRequestPayload;
+}
+
 export interface InternshipListItem {
   id: string;
   status: string;
@@ -54,6 +70,7 @@ export interface InternshipListItem {
   adProvisionTask: ChecklistItem | null;
   siteAccessTask: SiteAccessTaskSummary | null;
   exitChecklistTask: ChecklistItem | null;
+  extensionRequestTask: ExtensionRequestTaskSummary | null;
 }
 
 export interface InternshipsListResponse {

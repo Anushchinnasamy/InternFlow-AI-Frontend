@@ -97,6 +97,31 @@ export function useMentorConfirmCompletion() {
   });
 }
 
+// Mentor's "the internship needs more time" request — creates an
+// EXTENSION_REQUEST task that stays pending until both HR and Program
+// Owner separately approve it (see useDecideExtension below).
+export function useRequestExtension() {
+  const invalidate = useInvalidateInternshipsList();
+  return useMutation({
+    mutationFn: ({ internshipId, requestedEndDate, justification }: { internshipId: string; requestedEndDate: string; justification: string }) =>
+      api.post(`/internships/${internshipId}/extend`, { requestedEndDate, justification }),
+    onSuccess: () => invalidate(),
+  });
+}
+
+// HR and Program Owner each call this with their own token — one approval
+// alone just records that side's decision; the internship only flips to
+// EXTENDED once both have approved (or ends immediately on a REJECT from
+// either side).
+export function useDecideExtension() {
+  const invalidate = useInvalidateInternshipsList();
+  return useMutation({
+    mutationFn: ({ taskId, decision }: { taskId: string; decision: "APPROVE" | "REJECT" }) =>
+      api.post<{ message?: string }>(`/extensions/${taskId}/decide`, { decision }),
+    onSuccess: () => invalidate(),
+  });
+}
+
 // Frontend Day F5 Closure page — ACTIVE/EXTENDED -> COMPLETED. 409s if
 // today is before the internship's end date; the Closure page's countdown
 // badge is what keeps the button disabled until then rather than relying on
