@@ -120,12 +120,17 @@ export default function CandidatesPage() {
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebouncedValue(query, 400);
   const search = useCandidateSearch(debouncedQuery);
-  // The Candidates page itself is open to HR/PROGRAM_OWNER/MENTOR/REFERRER,
-  // but /evaluation/:id (per navigation.ts) is HR-only — showing a "View"
-  // link that always 403s for the other three roles is a dead end, not
+  // The Candidates page itself is open to HR/PROGRAM_OWNER/MENTOR/REFERRER/
+  // LEGAL, but /evaluation/:id (per navigation.ts) is HR-only — showing a
+  // "View" link that always 403s for the other roles is a dead end, not
   // real access control (the server-side gate is what actually matters;
   // this is just not offering a button that can't be used).
   const canViewEvaluation = user?.role === "HR";
+  // Found during manual Legal role testing: there was no link ANYWHERE in
+  // the app to /onboarding/:candidateId, even for HR — the page's own
+  // empty-state text said "Select a candidate from the Candidates page,"
+  // but nothing on this page ever did. Matches /onboarding's allowedRoles.
+  const canViewOnboarding = user?.role === "HR" || user?.role === "LEGAL";
 
   return (
     <>
@@ -210,13 +215,19 @@ export default function CandidatesPage() {
                         )}
                       </TableCell>
                       <TableCell>
-                        {canViewEvaluation ? (
-                          <Button asChild variant="outline" size="sm">
-                            <Link to={`/evaluation/${candidate.id}`}>View</Link>
-                          </Button>
-                        ) : (
-                          <span className="text-xs text-muted-foreground">—</span>
-                        )}
+                        <div className="flex justify-end gap-2">
+                          {canViewOnboarding && (
+                            <Button asChild variant="outline" size="sm">
+                              <Link to={`/onboarding/${candidate.id}`}>Onboarding</Link>
+                            </Button>
+                          )}
+                          {canViewEvaluation && (
+                            <Button asChild variant="outline" size="sm">
+                              <Link to={`/evaluation/${candidate.id}`}>View</Link>
+                            </Button>
+                          )}
+                          {!canViewOnboarding && !canViewEvaluation && <span className="text-xs text-muted-foreground">—</span>}
+                        </div>
                       </TableCell>
                     </TableRow>
                   );

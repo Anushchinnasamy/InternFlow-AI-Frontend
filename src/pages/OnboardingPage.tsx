@@ -497,7 +497,11 @@ export default function OnboardingPage() {
           </div>
         )}
 
-        {!isCandidateRole && isAwaitingVerification && (
+        {/* joiningRecord.verify is HR-only server-side (rbac.ts) — this page
+            is also reachable by LEGAL now (read-only PII access), so this
+            can't be gated by !isCandidateRole alone or LEGAL would see
+            buttons that always 403 on click. */}
+        {user?.role === "HR" && isAwaitingVerification && (
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => setReturnDialogOpen(true)}>
               Return for Correction

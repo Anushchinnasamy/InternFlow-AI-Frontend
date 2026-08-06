@@ -75,7 +75,10 @@ export const NAV_ITEMS: NavItem[] = [
     path: "/candidates",
     label: "Candidates",
     icon: Users,
-    allowedRoles: ["HR", "PROGRAM_OWNER", "MENTOR", "REFERRER"],
+    // LEGAL added during manual role testing — candidate.search/view360 on
+    // the backend now include LEGAL so they have a way to reach a specific
+    // candidate's joining record (see /onboarding below).
+    allowedRoles: ["HR", "PROGRAM_OWNER", "MENTOR", "REFERRER", "LEGAL"],
     component: CandidatesPage,
   },
   {
@@ -85,7 +88,13 @@ export const NAV_ITEMS: NavItem[] = [
     allowedRoles: ["HR"],
     component: CandidateEvaluationPage,
   },
-  { path: "/onboarding", label: "Onboarding", icon: ClipboardList, allowedRoles: ["CANDIDATE", "HR"], component: OnboardingPage },
+  {
+    path: "/onboarding",
+    label: "Onboarding",
+    icon: ClipboardList,
+    allowedRoles: ["CANDIDATE", "HR", "LEGAL"],
+    component: OnboardingPage,
+  },
   { path: "/nda", label: "NDA Management", icon: FileSignature, allowedRoles: ["HR", "LEGAL"], component: NdaManagementPage },
   { path: "/non-worker-id", label: "Non-Worker ID", icon: IdCard, allowedRoles: ["HR"], component: NonWorkerIdPage },
   {
