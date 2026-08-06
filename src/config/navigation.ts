@@ -142,5 +142,15 @@ export const NAV_ITEMS: NavItem[] = [
     component: AdminPage,
   },
   { path: "/settings", label: "Settings", icon: Settings, allowedRoles: ALL_ROLES, component: SettingsPage },
-  { path: "/copilot", label: "AI Copilot", icon: Sparkles, allowedRoles: ALL_ROLES, component: CopilotPage },
+  {
+    path: "/copilot",
+    label: "AI Copilot",
+    icon: Sparkles,
+    // Union of chatbot.ask ([REFERRER, CANDIDATE, MENTOR]) and
+    // copilot.analyze ([HR, PROGRAM_OWNER, MENTOR, IT_ADMIN, ADMIN_SECURITY])
+    // — LEGAL and SYSADMIN are in neither, so this page would be a
+    // guaranteed dead end for them no matter what they asked.
+    allowedRoles: ["REFERRER", "CANDIDATE", "MENTOR", "HR", "PROGRAM_OWNER", "IT_ADMIN", "ADMIN_SECURITY"],
+    component: CopilotPage,
+  },
 ];

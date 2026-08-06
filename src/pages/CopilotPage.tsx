@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ApiError } from "@/lib/api";
-import { useCopilotAnalyze, useChatbotAsk, isFaqQuestion } from "@/lib/copilotApi";
+import { useCopilotAnalyze, useChatbotAsk, pickCopilotChannel } from "@/lib/copilotApi";
+import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 
 const SUGGESTED_PROMPTS = [
@@ -25,6 +26,7 @@ interface ChatMessage {
 }
 
 export default function CopilotPage() {
+  const { user } = useAuth();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const copilotAnalyze = useCopilotAnalyze();
@@ -33,17 +35,30 @@ export default function CopilotPage() {
   const isSending = copilotAnalyze.isPending || chatbotAsk.isPending;
 
   async function sendQuestion(question: string) {
-    if (!question.trim() || isSending) return;
+    if (!question.trim() || isSending || !user) return;
 
     const userMessage: ChatMessage = { id: crypto.randomUUID(), role: "user", text: question };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
 
-    // Simple keyword-based routing for Day F2 — operational questions go
-    // to /copilot/analyze (aggregate ops data), FAQ-style questions go to
-    // /chatbot/ask (KB-grounded, zero DB access). See src/lib/copilotApi.ts.
+    // Role-aware routing: a role that can only reach one of the two backend
+    // endpoints always goes there (see pickCopilotChannel) — the FAQ keyword
+    // heuristic only decides between them for a role that can reach both.
+    // Getting this wrong previously meant e.g. a REFERRER's "Hi" (matching
+    // no FAQ keyword) silently routed to /copilot/analyze, which REFERRER
+    // has no access to at all — a guaranteed 403 no matter what they typed.
+    const channel = pickCopilotChannel(user.role, question);
+
+    if (channel === "none") {
+      setMessages((prev) => [
+        ...prev,
+        { id: crypto.randomUUID(), role: "assistant", text: "AI Copilot isn't available for your role." },
+      ]);
+      return;
+    }
+
     try {
-      if (isFaqQuestion(question)) {
+      if (channel === "chatbot") {
         const result = await chatbotAsk.mutateAsync(question);
         setMessages((prev) => [
           ...prev,
