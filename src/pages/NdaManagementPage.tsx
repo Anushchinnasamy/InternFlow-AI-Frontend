@@ -18,6 +18,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useInternshipsList, useExpireNda } from "@/lib/internshipsApi";
+import { useAuth } from "@/context/AuthContext";
 import { ApiError } from "@/lib/api";
 import type { InternshipListItem } from "@/types/internshipsList";
 
@@ -39,10 +40,16 @@ function statusBadge(status: "pending" | "signed" | "expired") {
 }
 
 export default function NdaManagementPage() {
+  const { user } = useAuth();
   const { data, isPending, error } = useInternshipsList();
   const expireNda = useExpireNda();
   const [viewing, setViewing] = useState<InternshipListItem | null>(null);
   const [templatesOpen, setTemplatesOpen] = useState(false);
+  // This page is also reachable by LEGAL (nav allows HR/LEGAL), but
+  // internship.ndaExpire is HR-only server-side — showing an enabled
+  // button that always 403s for LEGAL isn't real access control, it's
+  // just a dead end. Same principle as CandidatesPage's canViewEvaluation.
+  const canExpireNda = user?.role === "HR";
 
   const rows = (data?.internships ?? []).filter((i) => i.nda !== null);
   const pendingCount = rows.filter((i) => i.nda!.status === "pending").length;
@@ -115,7 +122,8 @@ export default function NdaManagementPage() {
                       <Button
                         size="sm"
                         variant="destructive"
-                        disabled={row.nda!.status !== "pending" || expireNda.isPending}
+                        disabled={!canExpireNda || row.nda!.status !== "pending" || expireNda.isPending}
+                        title={!canExpireNda ? "HR only" : undefined}
                         onClick={() => void handleExpire(row.id)}
                       >
                         Expire
