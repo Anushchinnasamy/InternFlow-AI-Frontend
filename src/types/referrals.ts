@@ -29,3 +29,19 @@ export interface OverrideInput {
   value: unknown;
   aiActionId: string;
 }
+
+export interface PendingMentorConfirmation {
+  id: string;
+  candidateName: string;
+  candidateEmail: string;
+  referrerName: string;
+  projectTitle: string;
+  projectOverview: string;
+  proposedStart: string;
+  proposedEnd: string;
+  site: string;
+  department: string;
+  priorRelationship: string;
+  conflictDeclared: boolean;
+  createdAt: string;
+}

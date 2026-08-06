@@ -1,10 +1,39 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import type { CreateReferralInput, CreateReferralResponse, OverrideInput } from "@/types/referrals";
+import type { CreateReferralInput, CreateReferralResponse, OverrideInput, PendingMentorConfirmation } from "@/types/referrals";
 
 export function useCreateReferral() {
   return useMutation({
     mutationFn: (input: CreateReferralInput) => api.post<CreateReferralResponse>("/referrals", input),
+  });
+}
+
+// Gap fix — nothing surfaced "referrals awaiting my confirmation" for a
+// mentor anywhere in the app; /candidates/search's MENTOR scope needs an
+// Internship to already exist, which mentor-confirm itself is what creates.
+export function usePendingMentorConfirmations() {
+  return useQuery({
+    queryKey: ["referrals", "pending-confirmation"],
+    queryFn: () => api.get<{ referrals: PendingMentorConfirmation[] }>("/referrals/pending-confirmation"),
+  });
+}
+
+export function useMentorConfirmReferral() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      referralId,
+      decision,
+      reason,
+    }: {
+      referralId: string;
+      decision: "CONFIRM" | "DECLINE";
+      reason?: string;
+    }) => api.post(`/referrals/${referralId}/mentor-confirm`, { decision, reason }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["referrals", "pending-confirmation"] });
+      queryClient.invalidateQueries({ queryKey: ["internships", "list"] });
+    },
   });
 }
 
