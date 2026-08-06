@@ -127,6 +127,18 @@ export default function OnboardingPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [joiningRecord?.id, joiningRecord?.locked, joiningRecord?.correctionFields?.length]);
 
+  // Bug found in manual testing: nothing anywhere on this page captured
+  // consentVersion/consentedAt, which POST /:id/submit requires — Submit
+  // was a guaranteed 400 no matter what else was filled in. Given consent
+  // is a one-time legal affirmation, it's persisted immediately on check
+  // (see giveConsent below) rather than waiting for a separate "Save Draft"
+  // click. Declared here, before the early returns below, since hooks can't
+  // follow a conditional return.
+  const [consentGiven, setConsentGiven] = useState(!!joiningRecord?.consentVersion);
+  useEffect(() => {
+    setConsentGiven(!!joiningRecord?.consentVersion);
+  }, [joiningRecord?.consentVersion]);
+
   const [returnDialogOpen, setReturnDialogOpen] = useState(false);
   const [correctionFields, setCorrectionFields] = useState<string[]>([]);
   const [correctionReason, setCorrectionReason] = useState("");
@@ -201,6 +213,16 @@ export default function OnboardingPage() {
       toast.success("Joining form submitted for HR verification.");
     } catch (error) {
       toast.error(error instanceof ApiError ? error.message : "Could not submit.");
+    }
+  }
+
+  async function giveConsent() {
+    try {
+      await patchRecord.mutateAsync({ consentVersion: "v1", consentedAt: new Date().toISOString() });
+      setConsentGiven(true);
+      toast.success("Consent recorded.");
+    } catch (error) {
+      toast.error(error instanceof ApiError ? error.message : "Could not record consent.");
     }
   }
 
@@ -421,13 +443,47 @@ export default function OnboardingPage() {
           </CardContent>
         </Card>
 
+        {isCandidateRole && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Consent</CardTitle>
+              <CardDescription>Required before this form can be submitted.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <label className="flex items-start gap-2 text-sm">
+                <Checkbox
+                  checked={consentGiven}
+                  disabled={readOnly || consentGiven || patchRecord.isPending}
+                  onCheckedChange={(checked) => {
+                    if (checked) void giveConsent();
+                  }}
+                />
+                <span>
+                  I consent to Intern Flow processing my personal data (including government ID and education
+                  history) for the purpose of this unpaid internship.
+                  {consentGiven && joiningRecord?.consentedAt && (
+                    <span className="ml-1 text-xs text-muted-foreground">
+                      (recorded {new Date(joiningRecord.consentedAt).toLocaleString()})
+                    </span>
+                  )}
+                </span>
+              </label>
+            </CardContent>
+          </Card>
+        )}
+
         {isCandidateRole && !readOnly && (
           <div className="flex justify-end gap-2">
             <Button type="submit" variant="outline" disabled={patchRecord.isPending}>
               {patchRecord.isPending ? "Saving…" : "Save Draft"}
             </Button>
             {!hasCorrections && (
-              <Button type="button" disabled={submitRecord.isPending} onClick={() => void handleSubmitForm()}>
+              <Button
+                type="button"
+                disabled={submitRecord.isPending || !consentGiven}
+                title={!consentGiven ? "Consent is required before submitting" : undefined}
+                onClick={() => void handleSubmitForm()}
+              >
                 {submitRecord.isPending ? "Submitting…" : "Submit"}
               </Button>
             )}
