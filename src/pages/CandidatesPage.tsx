@@ -14,15 +14,23 @@ import { StageBadge } from "@/components/StageBadge";
 import { RecommendationBadge } from "@/components/RecommendationBadge";
 import { useCandidateSearch } from "@/lib/candidatesApi";
 import { useDebouncedValue } from "@/lib/useDebouncedValue";
+import { useAuth } from "@/context/AuthContext";
 
 function initials(name: string): string {
   return name.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase();
 }
 
 export default function CandidatesPage() {
+  const { user } = useAuth();
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebouncedValue(query, 400);
   const search = useCandidateSearch(debouncedQuery);
+  // The Candidates page itself is open to HR/PROGRAM_OWNER/MENTOR/REFERRER,
+  // but /evaluation/:id (per navigation.ts) is HR-only — showing a "View"
+  // link that always 403s for the other three roles is a dead end, not
+  // real access control (the server-side gate is what actually matters;
+  // this is just not offering a button that can't be used).
+  const canViewEvaluation = user?.role === "HR";
 
   return (
     <>
@@ -105,9 +113,13 @@ export default function CandidatesPage() {
                         )}
                       </TableCell>
                       <TableCell>
-                        <Button asChild variant="outline" size="sm">
-                          <Link to={`/evaluation/${candidate.id}`}>View</Link>
-                        </Button>
+                        {canViewEvaluation ? (
+                          <Button asChild variant="outline" size="sm">
+                            <Link to={`/evaluation/${candidate.id}`}>View</Link>
+                          </Button>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">—</span>
+                        )}
                       </TableCell>
                     </TableRow>
                   );
